@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<!--
+include this file as soon as possible, otherwise it may not work if the app manages to store references
+to the original functions!
+-->
+<script src="js/MTC.js"></script>
+<body>
+Open JS console for fun :)
+</body>
+
+<script>
+MTC.excludeTimers = [realTimer]; //we want realTimer to remain unaffected
+
+//turn spoofing on
+MTC.toggleSpoofing(true);
+setInterval(realTimer, 3000);
+
+//the actual slowdown code
+var lastCallTime;
+MTC.real.setInterval(function() {
+  var delta = lastCallTime ? MTC.real.dateNow() - lastCallTime : 0;
+  lastCallTime = MTC.real.dateNow();
+  MTC.setTime(Date.now() + delta/2);
+}, 10);
+
+
+function realTimer() { console.log('I am executed every 5 seconds no matter what MTC does!'); }
+function otherTimer() {
+  console.log('hi, 1000ms interval here');
+  console.log('date: ', Date());
+  console.log('real date: ', MTC.real.Date());
+}
+
+//now we will ask for otherTimer to be executed every second:
+setInterval(otherTimer, 1000);
+
+
+//as you can see, the time is slowed down
+//but the function doesn't know it (unless they use MTC.real)
+//because everything is spoofed
+</script>
+</html>

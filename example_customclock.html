@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<!--
+include this file as soon as possible, otherwise it may not work if the app manages to store references
+to the original functions!
+-->
+<script src="js/MTC.js"></script>
+<body>
+Open JS console for fun :)<br>PS. make sure you don't run this file from a local filesystem, Workers can't be loaded from a local filesystem
+</body>
+<script id="workercode" type="text/plain">
+//this will be executed in a Worker!
+
+function sayHi() {
+  console.log('I am executed in a Worker every second!', Date());
+}
+setInterval(sayHi, 1000);
+</script>
+<script>
+MTC.toggleSpoofing(true);
+
+var workerSource = document.getElementById('workercode').text;
+var worker = new Worker(URL.createObjectURL(new Blob([workerSource], {type: 'text/javascript'})));
+
+setInterval("console.log('local 1s interval', Date())", 1000);
+
+function forwardClock(x) {
+  MTC.setTime(Date.now()+x);
+}
+
+console.log('Type forwardClock(x) to... well, advance the clock by x ms :)');
+</script>
+</html>

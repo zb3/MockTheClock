@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<!--
+include this file as soon as possible, otherwise it may not work if the app manages to store references
+to the original functions!
+-->
+<script src="js/MTC.js"></script>
+<body>
+Open JS console for fun :)
+</body>
+
+<script>
+/*
+in this example, we don't want to modify timers, we just want to go back in time
+by 666000ms
+
+NOTE: each time we go back, we need to clear intervals as those set in the future (before going back)
+will not be executed
+*/
+
+var delta = 666000;
+//turn spoofing on
+MTC.toggleSpoofing(true);
+MTC.setTime(MTC.real.dateNow()-delta);
+
+//we still need to take care of the clock ourselves!
+MTC.real.setInterval(function() {
+  MTC.setTime(MTC.real.dateNow()-delta);
+}, 10);
+
+function timer() {
+  console.log('date: ', Date());
+  console.log('Date.now: ', Date.now());
+  console.log('new Date(): ', new Date());
+  console.log('Date delta', MTC.real.dateNow()-Date.now());
+}
+
+setInterval(timer, 1000);
+</script>
+</html>
